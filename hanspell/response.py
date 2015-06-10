@@ -6,5 +6,5 @@ _checked = namedtuple('Checked',
     ['result', 'original', 'checked', 'errors', 'words', 'time'])
 class Checked(_checked):
     def __new__(cls, result=False, original='', checked='', errors=0, words=[], time=0.0):
-        return super(Node, cls).__new__(
+        return super(Checked, cls).__new__(
             cls, result, original, checked, errors, words, time)

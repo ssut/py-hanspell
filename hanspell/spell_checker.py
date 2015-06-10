@@ -96,4 +96,6 @@ def check(text):
 
         result['words'][word] = check_result
 
+    result = Checked(**result)
+
     return result

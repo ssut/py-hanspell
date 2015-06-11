@@ -59,7 +59,7 @@ def check(text):
         'words': OrderedDict(),
     }
 
-    # 띄어쓰기로 구분하기 위해 태그는 일단 보기쉽게 바꿔둠.
+    # 띄어쓰기로 구분하기 위해 태그는 일단 보기 쉽게 바꿔둠.
     # ElementTree의 iter()를 써서 더 좋게 할 수 있는 방법이 있지만
     # 이 짧은 코드에 굳이 그렇게 할 필요성이 없으므로 일단 문자열을 치환하는 방법으로 작성.
     html = html.replace('<span class=\'re_green\'>', '<green>') \

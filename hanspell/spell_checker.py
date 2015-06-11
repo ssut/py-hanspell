@@ -31,7 +31,7 @@ def check(text):
     """
     if isinstance(text, list):
         result = []
-        for item in tesxt:
+        for item in text:
             checked = check(item)
             result.append(checked)
         return result

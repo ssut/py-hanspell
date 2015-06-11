@@ -27,5 +27,10 @@ class SpellCheckerTests(unittest.TestCase):
         assert items[u'그만하게'] == CheckResult.PASSED
         assert items[u'할까?'] == CheckResult.WRONG_SPELLING
 
+    def test_list(self):
+        results = spell_checker.check([u'안녕 하세요.', u'저는 한국인 입니다.'])
+        assert results[0].checked == u'안녕하세요.'
+        assert results[1].checked == u'저는 한국인입니다.'
+
 if __name__ == '__main__':
     unittest.main()

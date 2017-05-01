@@ -2,6 +2,7 @@
 """
 Python용 한글 맞춤법 검사 모듈
 """
+
 import requests
 import json
 import time
@@ -18,9 +19,12 @@ _agent = requests.Session()
 PY3 = sys.version_info[0] == 3
 
 def _remove_tags(text):
-    text = u'<content>{}</content>'.format(text)
+
+    text = u'<content>{}</content>'.format(text).replace('<br>','')
     if not PY3:
         text = text.encode('utf-8')
+
+
     result = ''.join(ET.fromstring(text).itertext())
 
     return result
@@ -41,13 +45,21 @@ def check(text):
         return Checked(result=False)
 
     payload = {
-        '_callback': '',
-        'q': text,
+        '_callback':'window.__jindo2_callback._spellingCheck_0',
+        'q': text
     }
+
+    headers = {
+        'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'
+    }
+
+
     start_time = time.time()
-    r = _agent.get(base_url, params=payload)
+    r = _agent.get(base_url, params=payload, headers = headers)
     passed_time = time.time() - start_time
-    r = r.text[1:-2]  # ({json}); -> {json}
+
+    r = r.text[42:-2]
+
     data = json.loads(r)
     html = data['message']['result']['html']
     result = {

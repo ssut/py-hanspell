@@ -3,6 +3,8 @@
 Python용 한글 맞춤법 검사 모듈
 """
 
+__version__ = '1.1'
+
 import requests
 import json
 import time
@@ -74,20 +76,28 @@ def check(text):
     # 띄어쓰기로 구분하기 위해 태그는 일단 보기 쉽게 바꿔둠.
     # ElementTree의 iter()를 써서 더 좋게 할 수 있는 방법이 있지만
     # 이 짧은 코드에 굳이 그렇게 할 필요성이 없으므로 일단 문자열을 치환하는 방법으로 작성.
-    html = html.replace('<span class=\'re_green\'>', '<green>') \
-               .replace('<span class=\'re_red\'>', '<red>') \
-               .replace('<span class=\'re_purple\'>', '<purple>') \
+    #html = html.replace('<span class=\'re_green\'>', '<green>') \
+               #.replace('<span class=\'re_red\'>', '<red>') \
+               #.replace('<span class=\'re_purple\'>', '<purple>') \
+               #.replace('</span>', '<end>')
+
+    html = html.replace('<span', '') \
                .replace('</span>', '<end>')
+
     items = html.split(' ')
     words = []
     tmp = ''
     for word in items:
+        
         if tmp == '' and word[:1] == '<':
             pos = word.find('>') + 1
             tmp = word[:pos]
         elif tmp != '':
             word = u'{}{}'.format(tmp, word)
         
+        if word == '' :
+            continue
+
         if word[-5:] == '<end>':
             word = word.replace('<end>', '')
             tmp = ''
@@ -96,15 +106,15 @@ def check(text):
 
     for word in words:
         check_result = CheckResult.PASSED
-        if word[:5] == '<red>':
+        if word[:17] == 'class=\'red_text\'>':
             check_result = CheckResult.WRONG_SPELLING
-            word = word.replace('<red>', '')
-        elif word[:7] == '<green>':
+            word = word.replace('class=\'red_text\'>', '')
+        elif word[:19] == 'class=\'green_text\'>':
             check_result = CheckResult.WRONG_SPACING
-            word = word.replace('<green>', '')
-        elif word[:8] == '<purple>':
+            word = word.replace('class=\'green_text\'>', '')
+        elif word[:20] == 'class=\'purple_text\'>':
             check_result = CheckResult.AMBIGUOUS
-            word = word.replace('<purple>', '')
+            word = word.replace('class=\'purple_text\'>', '')
 
         result['words'][word] = check_result
 

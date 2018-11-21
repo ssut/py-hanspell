@@ -1,5 +1,9 @@
 #!/usr/bin/env python
-from pip.req import parse_requirements
+try: # for pip >= 10
+    from pip._internal.req import parse_requirements
+except ImportError: # for pip <= 9.0.3
+    from pip.req import parse_requirements
+    
 from setuptools import setup, find_packages
 
 def install():

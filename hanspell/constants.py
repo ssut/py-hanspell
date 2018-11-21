@@ -1,4 +1,4 @@
-base_url = 'http://csearch.naver.com/dcontent/spellchecker.nhn'
+base_url = 'https://m.search.naver.com/p/csearch/ocontent/spellchecker.nhn'
 
 class CheckResult:
     PASSED = 0

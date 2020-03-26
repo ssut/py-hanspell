@@ -1,5 +1,11 @@
 #!/usr/bin/env python
-from pip.req import parse_requirements
+
+try: 
+    from pip._internal.req import parse_requirements # pip 10버전 이상
+    
+except ImportError:
+    from pip.req import parse_requirements # pip 9버전 이하
+    
 from setuptools import setup, find_packages
 
 def install():

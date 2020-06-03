@@ -109,6 +109,7 @@ from hanspell.constants import CheckResult
 |.WRONG_SPELLING|맞춤법에 문제가 있는 단어 또는 구절|
 |.WRONG_SPACING|띄어쓰기에 문제가 있는 단어 또는 구절|
 |.AMBIGUOUS|표준어가 의심되는 단어 또는 구절|
+|.STATISTICAL_CORRECTION|통계적 교정에 따른 단어 또는 구절|
 
 
 ## 라이브러리 사용에 대한 안내

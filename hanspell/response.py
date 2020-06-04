@@ -21,3 +21,6 @@ class Checked(_checked):
             'time': self.time,
         }
         return d
+
+    def only_checked(self):
+        return self.checked

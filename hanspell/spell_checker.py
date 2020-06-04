@@ -18,6 +18,7 @@ from .constants import CheckResult
 _agent = requests.Session()
 PY3 = sys.version_info[0] == 3
 
+
 def _remove_tags(text):
     text = u'<content>{}</content>'.format(text).replace('<br>','')
     if not PY3:

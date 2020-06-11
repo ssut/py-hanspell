@@ -4,6 +4,7 @@ from hanspell import spell_checker
 from hanspell.constants import CheckResult
 from textwrap import dedent as trim
 
+
 class SpellCheckerTests(unittest.TestCase):
     def setUp(self):
         pass
@@ -21,7 +22,7 @@ class SpellCheckerTests(unittest.TestCase):
         items = result.words
         assert items[u'한'] == CheckResult.WRONG_SPACING
         assert items[u'아이가'] == CheckResult.WRONG_SPACING
-        assert items[u'장난감을'] == CheckResult.AMBIGUOUS
+        assert items[u'장난감을'] == CheckResult.STATISTICAL_CORRECTION
         assert items[u'갖고'] == CheckResult.WRONG_SPACING
         assert items[u'놀고'] == CheckResult.WRONG_SPACING
         assert items[u'있다.'] == CheckResult.WRONG_SPACING
@@ -42,6 +43,7 @@ class SpellCheckerTests(unittest.TestCase):
         """)
 
         result = spell_checker.check(paragraph)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -45,8 +45,10 @@ def check(text):
         return Checked(result=False)
 
     payload = {
-        '_callback': 'window.__jindo2_callback._spellingCheck_0',
-        'q': text
+        '_callback': 'jQuery11240003383472025177525_1680133565087',
+        'q': text,
+        'where': 'nexearch',
+        'color_blindness': 0
     }
 
     headers = {

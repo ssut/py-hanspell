@@ -18,7 +18,7 @@ class SpellCheckerTests(unittest.TestCase):
     def test_words(self):
         result = spell_checker.check(u'한아이가 장난깜을 갖고놀고있다. 그만하게 할가?')
         assert result.errors == 4
-        
+
         items = result.words
         assert items[u'한'] == CheckResult.WRONG_SPACING
         assert items[u'아이가'] == CheckResult.WRONG_SPACING
@@ -43,6 +43,24 @@ class SpellCheckerTests(unittest.TestCase):
         """)
 
         result = spell_checker.check(paragraph)
+
+    def test_violet_color(self):
+        result = spell_checker.check(u'회새긴간 작까 김동식 걍심꼬백 뜽 새 소설집 뚜권 출간')
+        assert result.errors == 5
+
+        items = result.words
+        assert items[u'회생'] == CheckResult.STATISTICAL_CORRECTION
+        assert items[u'긴'] == CheckResult.STATISTICAL_CORRECTION
+        assert items[u'간'] == CheckResult.STATISTICAL_CORRECTION
+        assert items[u'작가'] == CheckResult.STATISTICAL_CORRECTION
+        assert items[u'김동식'] == CheckResult.PASSED
+        assert items[u'걍심꼬백'] == CheckResult.AMBIGUOUS
+        assert items[u'뜬'] == CheckResult.STATISTICAL_CORRECTION
+        assert items[u'새'] == CheckResult.PASSED
+        assert items[u'소설집'] == CheckResult.PASSED
+        assert items[u'두'] == CheckResult.STATISTICAL_CORRECTION
+        assert items[u'권'] == CheckResult.STATISTICAL_CORRECTION
+        assert items[u'출간'] == CheckResult.PASSED
 
 
 if __name__ == '__main__':

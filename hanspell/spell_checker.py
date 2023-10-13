@@ -26,9 +26,6 @@ def read_token():
     return TOKEN
 
 def update_token(agent):
-    """update passportkey
-    from https://gist.github.com/AcrylicShrimp/4c94db38b7d2c4dd2e832a7d53654e42
-    """
 
     html = agent.get(url='https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=맞춤법검사기') 
 

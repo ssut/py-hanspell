@@ -66,6 +66,9 @@ def get_response(TOKEN, text):
     
     r = _agent.get(base_url, params=payload, headers=headers)
     data = json.loads(r.text)
+    
+    if 'error' in data['message'] :
+        r = get_response(update_token(_agent), text)
              
     return r
 

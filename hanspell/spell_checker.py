@@ -8,6 +8,7 @@ import json
 import time
 import sys
 import re
+from cachetools import TTLCache
 from urllib import parse
 from collections import OrderedDict
 import xml.etree.ElementTree as ET
@@ -19,21 +20,24 @@ from .constants import CheckResult
 
 _agent = requests.Session()
 PY3 = sys.version_info[0] == 3
+cache = TTLCache(maxsize = 10, ttl = 3600)
 
 def read_token():
-    with open("token.txt", "r") as f:
-        TOKEN = f.read()
-    return TOKEN
+    try:
+        TOKEN = cache.get('PASSPORT_TOKEN')
+        return TOKEN
+    except KeyError:
+        return None
 
 def update_token(agent):
+    print("used")
 
     html = agent.get(url='https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=맞춤법검사기') 
 
     match = re.search('passportKey=([a-zA-Z0-9]+)', html.text)
     if match is not None:
         TOKEN = parse.unquote(match.group(1))
-        with open("token.txt", "w") as f:
-            f.write(TOKEN)
+        cache['PASSPORT_TOKEN'] = TOKEN
     return TOKEN
 
 def _remove_tags(text):
@@ -46,6 +50,9 @@ def _remove_tags(text):
     return result
 
 def get_response(TOKEN, text):
+    
+    if(TOKEN == None) :
+        TOKEN = update_token(_agent)
     
     payload = {
         'passportKey' : TOKEN,
@@ -60,9 +67,6 @@ def get_response(TOKEN, text):
     
     r = _agent.get(base_url, params=payload, headers=headers)
     data = json.loads(r.text)
-    
-    if ('error' in data['message']) :
-        r = get_response(update_token(_agent), text)
              
     return r
 
@@ -82,10 +86,8 @@ def check(text):
     if len(text) > 500:
         return Checked(result=False)
     
-    TOKEN = read_token()
-    
     start_time = time.time()
-    r = get_response(TOKEN, text)
+    r = get_response(read_token(), text)
     passed_time = time.time() - start_time
     
     data = json.loads(r.text)

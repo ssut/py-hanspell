@@ -30,7 +30,6 @@ def read_token():
         return None
 
 def update_token(agent):
-    print("used")
 
     html = agent.get(url='https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=맞춤법검사기') 
 
@@ -51,7 +50,7 @@ def _remove_tags(text):
 
 def get_response(TOKEN, text):
     
-    if(TOKEN == None) :
+    if TOKEN is None:
         TOKEN = update_token(_agent)
     
     payload = {

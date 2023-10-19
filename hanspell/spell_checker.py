@@ -7,6 +7,9 @@ import requests
 import json
 import time
 import sys
+import re
+from cachetools import TTLCache
+from urllib import parse
 from collections import OrderedDict
 import xml.etree.ElementTree as ET
 
@@ -17,7 +20,24 @@ from .constants import CheckResult
 
 _agent = requests.Session()
 PY3 = sys.version_info[0] == 3
+cache = TTLCache(maxsize = 10, ttl = 3600)
 
+def read_token():
+    try:
+        TOKEN = cache.get('PASSPORT_TOKEN')
+        return TOKEN
+    except KeyError:
+        return None
+
+def update_token(agent):
+
+    html = agent.get(url='https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=맞춤법검사기') 
+
+    match = re.search('passportKey=([a-zA-Z0-9]+)', html.text)
+    if match is not None:
+        TOKEN = parse.unquote(match.group(1))
+        cache['PASSPORT_TOKEN'] = TOKEN
+    return TOKEN
 
 def _remove_tags(text):
     text = u'<content>{}</content>'.format(text).replace('<br>','')
@@ -27,6 +47,30 @@ def _remove_tags(text):
     result = ''.join(ET.fromstring(text).itertext())
 
     return result
+
+def get_response(TOKEN, text):
+    
+    if TOKEN is None:
+        TOKEN = update_token(_agent)
+    
+    payload = {
+        'passportKey' : TOKEN,
+        'q': text,
+        'color_blindness': 0
+    }
+    
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
+        'referer': 'https://search.naver.com/',
+    }
+    
+    r = _agent.get(base_url, params=payload, headers=headers)
+    data = json.loads(r.text)
+    
+    if 'error' in data['message'] :
+        r = get_response(update_token(_agent), text)
+             
+    return r
 
 
 def check(text):
@@ -43,21 +87,11 @@ def check(text):
     # 최대 500자까지 가능.
     if len(text) > 500:
         return Checked(result=False)
-
-    payload = {
-        'color_blindness': '0',
-        'q': text
-    }
-
-    headers = {
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-        'referer': 'https://search.naver.com/',
-    }
-
+    
     start_time = time.time()
-    r = _agent.get(base_url, params=payload, headers=headers)
+    r = get_response(read_token(), text)
     passed_time = time.time() - start_time
-
+    
     data = json.loads(r.text)
     html = data['message']['result']['html']
     result = {
